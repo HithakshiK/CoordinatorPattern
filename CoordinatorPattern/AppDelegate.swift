@@ -14,11 +14,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         self.window = UIWindow(frame: UIScreen.main.bounds)
-        window?.makeKeyAndVisible()
-        let vc = UIViewController()
-        vc.view.backgroundColor = .white
-        window?.rootViewController = vc
+        startMainAppCoordinator()
         return true
+    }
+
+    private func startMainAppCoordinator() {
+        guard let window else { return }
+        let coordinator = MainAppCoordinator(window: window, appDependencies: AppDependencies(networkService: NetworkService(), tracker: EventTracker()))
+        self.coordinator = coordinator
+        coordinator.start()
     }
 }
 
