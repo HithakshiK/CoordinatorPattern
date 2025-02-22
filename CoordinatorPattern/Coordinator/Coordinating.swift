@@ -10,6 +10,8 @@ import UIKit
 // MARK: - Base Protocols
 
 protocol Coordinating: AnyObject {
+    typealias CleanUpOperation = (Coordinating) -> Void
+
     // should always have navigation controller
     // either you provide exising or create new and give it coordinator.
     // Challenges - present in half screen, some navigation should be within coordinator and some may require to navigate to outside of current coordinator scope.
@@ -19,6 +21,7 @@ protocol Coordinating: AnyObject {
     var parentCoordinator: Coordinating? { get set }
     var childCoordinators: [Coordinating] { get set }
     var appDependencies: AppDependencies { get }
+    var cleanUp: CleanUpOperation? { get set }
 
     init(navigationController: UINavigationController, appDependencies: AppDependencies)
 
@@ -28,3 +31,29 @@ protocol Coordinating: AnyObject {
     func removeChildCoordinator(_ coordinator: Coordinating)
 }
 
+extension Coordinating {
+    /// Just builder function for regular Coordinator `start()`
+    /// - Returns: itself
+    func starts() -> Self {
+        start()
+        return self
+    }
+
+    /// Assign `cleanUp` with the given closure
+    /// This is created with intention to allow creating Coordinator by using builder pattern
+    /// ```swift
+    /// // Example of starting and assign cleanUp while creating the Coordinator
+    ///
+    /// MyCoordinator()
+    ///     .starts()
+    ///     .whenStopped { coordinator in
+    ///          doRemove(coordinator)
+    ///     }
+    /// ```
+    /// - Parameter cleanUp: Void closure that accept the caller
+    /// - Returns: itself
+    func whenStopped(do cleanUp: @escaping (Coordinating) -> Void) -> Self {
+        self.cleanUp = cleanUp
+        return self
+    }
+}

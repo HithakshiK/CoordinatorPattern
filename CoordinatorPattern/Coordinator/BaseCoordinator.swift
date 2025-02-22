@@ -14,6 +14,8 @@ class BaseCoordinator: NSObject, Coordinating {
     weak var parentCoordinator: Coordinating?
     var childCoordinators: [Coordinating] = []
     let appDependencies: AppDependencies
+    var cleanUp: CleanUpOperation?
+
     private(set) var initialViewController: UIViewController?
 
     required init(navigationController: UINavigationController, appDependencies: AppDependencies) {
@@ -34,6 +36,7 @@ class BaseCoordinator: NSObject, Coordinating {
     func stop() {
         // Clean up any resources and notify parent
         removeChildren()
+        cleanUp?(self)
         parentCoordinator?.removeChildCoordinator(self)
     }
 

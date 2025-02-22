@@ -10,6 +10,6 @@ import UIKit
 // MARK: - Presentation Types
 enum PresentationType {
     case push
-    case present(modalPresentationStyle: UIModalPresentationStyle = .fullScreen)
+    case present(modalPresentationStyle: UIModalPresentationStyle = .automatic)
     case embed(in: UIViewController, containerView: UIView)
 }
